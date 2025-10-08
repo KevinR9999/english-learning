@@ -9,19 +9,24 @@ export default function Levels() {
   ];
 
   return (
-    <div>
-      <h2 className="text-3xl font-bold text-center mb-6">Selecciona tu nivel</h2>
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="px-4 sm:px-6 md:px-10 py-10">
+      <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-8 text-blue-700">
+        Selecciona tu nivel
+      </h2>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {levels.map((level) => (
           <Link
             key={level.id}
             to={`/levels/${level.id.toLowerCase()}/reading`}
-            className={`bg-gradient-to-br ${level.color} text-white p-6 rounded-2xl shadow-lg transform hover:scale-105 transition duration-300`}
+            className={`bg-gradient-to-br ${level.color} text-white p-6 sm:p-8 rounded-2xl shadow-lg transform hover:scale-105 transition duration-300 text-center`}
           >
-            <h3 className="text-2xl font-bold mb-2">
+            <h3 className="text-xl sm:text-2xl font-bold mb-2 drop-shadow-md">
               {level.id} – {level.title}
             </h3>
-            <p>Haz clic para comenzar tus actividades 📘</p>
+            <p className="text-sm sm:text-base">
+              Haz clic para comenzar tus actividades 📘
+            </p>
           </Link>
         ))}
       </div>
