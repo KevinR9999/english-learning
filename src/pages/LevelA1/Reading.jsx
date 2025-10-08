@@ -4,10 +4,11 @@ export default function ReadingA1() {
   const [step, setStep] = useState(0);
   const [answer, setAnswer] = useState("");
   const [feedback, setFeedback] = useState("");
+  const [score, setScore] = useState(0);
   const [listening, setListening] = useState(false);
-  const [recognition, setRecognition] = useState(null);
+  const [finished, setFinished] = useState(false);
 
-  // Todas las preguntas (mezcladas de reading, writing, listening, speaking)
+  // 20 preguntas mezcladas
   const questions = [
     // 🧠 READING
     {
@@ -42,152 +43,127 @@ export default function ReadingA1() {
     },
 
     // ✍️ WRITING
-    {
-      type: "writing",
-      text: "Write the color of the sky on a sunny day.",
-      correct: "blue",
-    },
-    {
-      type: "writing",
-      text: "Write the number after 9.",
-      correct: "10",
-    },
-    {
-      type: "writing",
-      text: "How do you say 'hola' in English?",
-      correct: "hello",
-    },
-    {
-      type: "writing",
-      text: "What is the opposite of 'cold'?",
-      correct: "hot",
-    },
-    {
-      type: "writing",
-      text: "Write the word for 'gato' in English.",
-      correct: "cat",
-    },
+    { type: "writing", text: "Write the color of the sky on a sunny day.", correct: "blue" },
+    { type: "writing", text: "Write the number after 9.", correct: "10" },
+    { type: "writing", text: "How do you say 'hola' in English?", correct: "hello" },
+    { type: "writing", text: "What is the opposite of 'cold'?", correct: "hot" },
+    { type: "writing", text: "Write the word for 'gato' in English.", correct: "cat" },
 
     // 🎧 LISTENING
-    {
-      type: "listening",
-      text: "Listen and type the word you hear.",
-      audio: "Hello",
-      correct: "hello",
-    },
-    {
-      type: "listening",
-      text: "Listen and type the color you hear.",
-      audio: "red",
-      correct: "red",
-    },
-    {
-      type: "listening",
-      text: "Listen and type the number you hear.",
-      audio: "seven",
-      correct: "seven",
-    },
-    {
-      type: "listening",
-      text: "Listen and type the fruit you hear.",
-      audio: "apple",
-      correct: "apple",
-    },
-    {
-      type: "listening",
-      text: "Listen and type the animal you hear.",
-      audio: "dog",
-      correct: "dog",
-    },
+    { type: "listening", text: "Listen and type the word you hear.", audio: "Hello", correct: "hello" },
+    { type: "listening", text: "Listen and type the color you hear.", audio: "red", correct: "red" },
+    { type: "listening", text: "Listen and type the number you hear.", audio: "seven", correct: "seven" },
+    { type: "listening", text: "Listen and type the fruit you hear.", audio: "apple", correct: "apple" },
+    { type: "listening", text: "Listen and type the animal you hear.", audio: "dog", correct: "dog" },
 
     // 🎙️ SPEAKING
-    {
-      type: "speaking",
-      text: "Say 'hello' aloud.",
-      correct: "hello",
-    },
-    {
-      type: "speaking",
-      text: "Say 'good morning'.",
-      correct: "good morning",
-    },
-    {
-      type: "speaking",
-      text: "Say 'I am learning English'.",
-      correct: "i am learning english",
-    },
-    {
-      type: "speaking",
-      text: "Say 'my name is Kevin'.",
-      correct: "my name is kevin",
-    },
-    {
-      type: "speaking",
-      text: "Say 'thank you'.",
-      correct: "thank you",
-    },
+    { type: "speaking", text: "Say 'hello' aloud.", correct: "hello" },
+    { type: "speaking", text: "Say 'good morning'.", correct: "good morning" },
+    { type: "speaking", text: "Say 'I am learning English'.", correct: "i am learning english" },
+    { type: "speaking", text: "Say 'my name is Kevin'.", correct: "my name is kevin" },
+    { type: "speaking", text: "Say 'thank you'.", correct: "thank you" },
   ];
 
   const current = questions[step];
 
-  // ✅ Reproducir audio con voz sintetizada
+  // 🔊 Reproducir audio (simulado)
   const playAudio = (text) => {
     const utter = new SpeechSynthesisUtterance(text);
     utter.lang = "en-US";
+    utter.rate = 0.9;
     window.speechSynthesis.speak(utter);
   };
 
-  // 🎤 Iniciar reconocimiento de voz (para speaking)
-  const startListening = () => {
+  // 🎤 Reconocimiento de voz
+  const startSpeaking = () => {
     if (!("webkitSpeechRecognition" in window)) {
-      alert("Tu navegador no soporta reconocimiento de voz 😢");
+      alert("Tu navegador no soporta reconocimiento de voz 😢 Usa Chrome o Edge.");
       return;
     }
 
-    const recog = new window.webkitSpeechRecognition();
-    recog.lang = "en-US";
-    recog.continuous = false;
-    recog.interimResults = false;
+    const recognition = new window.webkitSpeechRecognition();
+    recognition.lang = "en-US";
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
 
-    recog.onstart = () => setListening(true);
-    recog.onend = () => setListening(false);
+    recognition.onstart = () => setListening(true);
+    recognition.onend = () => setListening(false);
 
-    recog.onresult = (event) => {
+    recognition.onresult = (event) => {
       const transcript = event.results[0][0].transcript.toLowerCase().trim();
       if (transcript === current.correct) {
-        setFeedback("✅ Perfect! Great pronunciation!");
+        setFeedback(`✅ You said "${transcript}". Correct!`);
+        setScore((prev) => prev + 1);
       } else {
-        setFeedback(`❌ You said: "${transcript}". Try again!`);
+        setFeedback(`❌ You said "${transcript}". Try again!`);
       }
     };
 
-    setRecognition(recog);
-    recog.start();
+    recognition.start();
   };
 
-  // ✅ Validar respuesta
+  // ✅ Verificar respuesta
   const checkAnswer = (userAnswer) => {
     if (userAnswer.toLowerCase().trim() === current.correct.toLowerCase().trim()) {
       setFeedback("✅ Correct! Great job!");
+      setScore((prev) => prev + 1);
     } else {
       setFeedback("❌ Incorrect, try again!");
     }
   };
 
-  // ✅ Siguiente pregunta
+  // ⏭️ Siguiente
   const nextQuestion = () => {
+    if (step < questions.length - 1) {
+      setStep(step + 1);
+      setAnswer("");
+      setFeedback("");
+    } else {
+      setFinished(true);
+    }
+  };
+
+  // 🔁 Reiniciar quiz
+  const restartQuiz = () => {
+    setStep(0);
+    setScore(0);
     setFeedback("");
     setAnswer("");
-    if (step < questions.length - 1) setStep(step + 1);
-    else setFeedback("🎉 ¡Felicidades! Has completado todas las actividades.");
+    setFinished(false);
   };
+
+  // 💯 Calcular puntuación
+  const percentage = Math.round((score / questions.length) * 100);
+
+  if (finished) {
+    return (
+      <div className="flex flex-col items-center justify-center bg-white shadow-lg rounded-2xl p-8 text-center max-w-md mx-auto mt-10">
+        <h2 className="text-3xl font-bold text-blue-700 mb-4">🎉 ¡Quiz terminado!</h2>
+        <p className="text-lg text-gray-700 mb-2">Tu puntuación final:</p>
+        <p className="text-4xl font-extrabold text-green-600 mb-4">{percentage}%</p>
+        <p className="text-gray-600 mb-6">
+          {percentage >= 80
+            ? "Excelente trabajo 💪"
+            : percentage >= 50
+            ? "¡Bien hecho! Puedes mejorar 👏"
+            : "Sigue practicando, tú puedes hacerlo 💫"}
+        </p>
+        <button
+          onClick={restartQuiz}
+          className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
+        >
+          Reintentar 🔁
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white shadow-lg rounded-2xl p-6 sm:p-8 text-center max-w-2xl mx-auto mt-6 mb-12">
-      <h2 className="text-2xl font-bold text-blue-700 mb-2">
-        A1 Interactive Practice
-      </h2>
-      <p className="text-gray-600 mb-6">Pregunta {step + 1} de {questions.length}</p>
+      <h2 className="text-2xl font-bold text-blue-700 mb-2">A1 Interactive Practice</h2>
+      <p className="text-gray-600 mb-6">
+        Pregunta {step + 1} de {questions.length}
+      </p>
 
       {/* Barra de progreso */}
       <div className="w-full bg-gray-200 h-3 rounded-full mb-6">
@@ -197,9 +173,9 @@ export default function ReadingA1() {
         ></div>
       </div>
 
-      {/* Mostrar pregunta según tipo */}
       <p className="text-lg mb-4 font-medium">{current.text}</p>
 
+      {/* 🧩 Lógica de cada tipo */}
       {current.type === "reading" && (
         <div className="flex flex-col gap-3">
           {current.options.map((opt) => (
@@ -257,7 +233,7 @@ export default function ReadingA1() {
       {current.type === "speaking" && (
         <div className="flex flex-col gap-3 items-center">
           <button
-            onClick={startListening}
+            onClick={startSpeaking}
             className={`${
               listening ? "bg-red-600" : "bg-purple-600"
             } text-white py-2 px-6 rounded-lg hover:opacity-90 transition`}
@@ -278,13 +254,13 @@ export default function ReadingA1() {
         </p>
       )}
 
-      {/* Siguiente pregunta */}
-      {feedback && step < questions.length - 1 && (
+      {/* Siguiente */}
+      {feedback && (
         <button
           onClick={nextQuestion}
           className="mt-6 bg-yellow-500 text-white py-2 px-6 rounded-lg hover:bg-yellow-600 transition"
         >
-          Siguiente ➡️
+          {step === questions.length - 1 ? "Ver resultado 🏁" : "Siguiente ➡️"}
         </button>
       )}
     </div>
