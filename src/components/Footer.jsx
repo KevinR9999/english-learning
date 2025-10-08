@@ -1,7 +1,7 @@
-export default function Footer(){
+export default function Footer() {
   return (
-    <footer className="bg-blue-600 text-white p-4 text-center">
-      <p>© {new Date().getFullYear()} English Learning Institute</p>
+    <footer className="bg-blue-700 text-white py-4 mt-10 text-center text-sm">
+      <p>🌟 English Learning App © {new Date().getFullYear()} | Aprende jugando 🇬🇧</p>
     </footer>
-  )
+  );
 }

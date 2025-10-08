@@ -1,24 +1,26 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Navbar from './components/Navbar';
-import Footer from './components/Footer';
-import Home from './pages/Home';
-import Levels from './pages/Levels';
-import Profile from './pages/Profile';
-import A1Reading from './pages/LevelA1/Reading';
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import Footer from "./components/Footer";
+import Navbar from "./components/Navbar";
+import Home from "./pages/Home";
+import ReadingA1 from "./pages/LevelA1/Reading";
+import Levels from "./pages/Levels";
+import Profile from "./pages/Profile";
 
-export default function App(){
+export default function App() {
   return (
     <Router>
-      <Navbar />
-      <main className="min-h-screen p-6">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/levels" element={<Levels />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/level/a1/reading" element={<A1Reading />} />
-        </Routes>
-      </main>
-      <Footer />
+      <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-100 via-white to-indigo-100 text-gray-800">
+        <Navbar />
+        <main className="flex-1 p-6 max-w-6xl mx-auto">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/levels" element={<Levels />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/levels/a1/reading" element={<ReadingA1 />} />
+          </Routes>
+        </main>
+        <Footer />
+      </div>
     </Router>
-  )
+  );
 }
