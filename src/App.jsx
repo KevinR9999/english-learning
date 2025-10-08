@@ -3,8 +3,10 @@ import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import ReadingA1 from "./pages/LevelA1/Reading";
+import SpeakingA1 from "./pages/LevelA1/SpeakingA1";
 import Levels from "./pages/Levels";
 import Profile from "./pages/Profile";
+
 
 export default function App() {
   return (
@@ -17,6 +19,7 @@ export default function App() {
             <Route path="/levels" element={<Levels />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/levels/a1/reading" element={<ReadingA1 />} />
+            <Route path="/levels/a1/speaking" element={<SpeakingA1 />} />
           </Routes>
         </main>
         <Footer />
