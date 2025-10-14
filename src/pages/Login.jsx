@@ -8,7 +8,7 @@ export default function Login({ onLogin }) {
   // Usuarios precargados
   const users = [
     { email: "kevin@example.com", password: "123456", name: "Kevin Ramirez" },
-    { email: "maria@example.com", password: "password", name: "Maria Lopez" },
+    { email: "emanuel@example.com", password: "password", name: "Emanuel Otero" },
   ];
 
   const handleSubmit = (e) => {
