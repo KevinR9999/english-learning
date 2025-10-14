@@ -1,8 +1,8 @@
-import { Book, Home, Menu, User, X } from "lucide-react";
+import { Book, Home, LogOut, Menu, User, X } from "lucide-react"; // 👈 Agregado LogOut
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
-export default function Navbar() {
+export default function Navbar({ onLogout }) { // 👈 Recibe la función de logout como prop
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -46,6 +46,18 @@ export default function Navbar() {
               <span className="text-base sm:text-sm">{link.name}</span>
             </Link>
           ))}
+
+          {/* 👇 Botón de Cerrar sesión */}
+          <button
+            onClick={() => {
+              setMenuOpen(false);
+              if (onLogout) onLogout();
+            }}
+            className="flex justify-center sm:justify-start items-center gap-2 py-3 sm:py-0 text-white hover:text-red-300 transition w-full sm:w-auto"
+          >
+            <LogOut size={20} />
+            <span className="text-base sm:text-sm">Cerrar sesión</span>
+          </button>
         </div>
       </div>
     </nav>
