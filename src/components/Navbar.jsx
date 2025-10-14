@@ -1,8 +1,8 @@
-import { Book, Home, LogOut, Menu, User, X } from "lucide-react"; // 👈 Agregado LogOut
+import { Book, Home, LogOut, Menu, User, X } from "lucide-react";
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
-export default function Navbar({ onLogout }) { // 👈 Recibe la función de logout como prop
+export default function Navbar({ user, onLogout }) {
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -27,11 +27,11 @@ export default function Navbar({ onLogout }) { // 👈 Recibe la función de log
           {menuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
 
-        {/* Menú de enlaces (horizontal en desktop, desplegable en mobile) */}
+        {/* Menú */}
         <div
           className={`${
             menuOpen ? "block" : "hidden"
-          } absolute sm:static top-full left-0 w-full sm:w-auto bg-blue-600 sm:bg-transparent sm:flex sm:gap-6 text-center sm:text-left transition-all`}
+          } absolute sm:static top-full left-0 w-full sm:w-auto bg-blue-600 sm:bg-transparent sm:flex sm:items-center sm:gap-6 text-center sm:text-left transition-all`}
         >
           {links.map((link) => (
             <Link
@@ -47,13 +47,13 @@ export default function Navbar({ onLogout }) { // 👈 Recibe la función de log
             </Link>
           ))}
 
-          {/* 👇 Botón de Cerrar sesión */}
+          {/* Botón de cerrar sesión */}
           <button
             onClick={() => {
+              onLogout();
               setMenuOpen(false);
-              if (onLogout) onLogout();
             }}
-            className="flex justify-center sm:justify-start items-center gap-2 py-3 sm:py-0 text-white hover:text-red-300 transition w-full sm:w-auto"
+            className="flex justify-center sm:justify-start items-center gap-2 py-3 sm:py-0 hover:text-red-300 transition text-white w-full sm:w-auto"
           >
             <LogOut size={20} />
             <span className="text-base sm:text-sm">Cerrar sesión</span>
